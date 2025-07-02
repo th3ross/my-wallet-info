@@ -1,60 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>My Wallet Info</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      padding: 20px;
+      background: #f0f0f0;
       text-align: center;
+      padding-top: 50px;
     }
-    .box {
-      background: #fff;
+    .card {
+      background: white;
       padding: 20px;
       display: inline-block;
-      border-radius: 8px;
+      border-radius: 10px;
       box-shadow: 0 0 10px #ccc;
+    }
+    .label {
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <div class="box">
-    <h2>Wallet Info</h2>
-    <p><strong>Address:</strong> <span id="address">Loading...</span></p>
-    <p><strong>ETH Balance:</strong> <span id="balance">Loading...</span></p>
+  <div class="card">
+    <h2>💼 Wallet Overview</h2>
+    <p><span class="label">Address:</span> <span id="address">Loading...</span></p>
+    <p><span class="label">ETH Balance:</span> <span id="balance">Loading...</span></p>
   </div>
 
   <script>
     const apiKey = "3VKWDefAEoXUvcptkPXcpGRkULVHTxTJ";
-    const walletAddress = "0x9a99DD8E911e26B48946484f2BbC2edF2c8A9e1e";
-    const url = `https://eth-mainnet.g.alchemy.com/v2/${apiKey}`;
+    const address = "0x9a99DD8E911e26B48946484f2BbC2edF2c8A9e1e";
+    const url = `https://eth-mainnet.g.alchemy.com/v2/3VKWDefAEoXUvcptkPXcpGRkULVHTxTJ`;
 
-    document.getElementById("address").textContent = walletAddress;
+    document.getElementById("address").textContent = address;
 
-    async function fetchBalance() {
-      const body = {
+    async function loadBalance() {
+      const data = {
         jsonrpc: "2.0",
+        id: 1,
         method: "eth_getBalance",
-        params: [walletAddress, "latest"],
-        id: 1
+        params: [address, "latest"]
       };
 
       const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body)
+        body: JSON.stringify(data)
       });
 
-      const data = await res.json();
-      const balanceInWei = parseInt(data.result, 16);
-      const balanceInEth = balanceInWei / 1e18;
+      const result = await res.json();
+      const wei = BigInt(result.result);
+      const eth = Number(wei) / 1e18;
 
-      document.getElementById("balance").textContent = `${balanceInEth.toFixed(4)} ETH`;
+      document.getElementById("balance").textContent = eth.toFixed(5) + " ETH";
     }
 
-    fetchBalance();
+    loadBalance();
   </script>
 </body>
 </html>
