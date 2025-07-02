@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Wallet Info</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+      text-align: center;
+    }
+    .box {
+      background: #fff;
+      padding: 20px;
+      display: inline-block;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #ccc;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Wallet Info</h2>
+    <p><strong>Address:</strong> <span id="address">Loading...</span></p>
+    <p><strong>ETH Balance:</strong> <span id="balance">Loading...</span></p>
+  </div>
+
+  <script>
+    const apiKey = "3VKWDefAEoXUvcptkPXcpGRkULVHTxTJ";
+    const walletAddress = "0x9a99DD8E911e26B48946484f2BbC2edF2c8A9e1e";
+    const url = `https://eth-mainnet.g.alchemy.com/v2/${apiKey}`;
+
+    document.getElementById("address").textContent = walletAddress;
+
+    async function fetchBalance() {
+      const body = {
+        jsonrpc: "2.0",
+        method: "eth_getBalance",
+        params: [walletAddress, "latest"],
+        id: 1
+      };
+
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+
+      const data = await res.json();
+      const balanceInWei = parseInt(data.result, 16);
+      const balanceInEth = balanceInWei / 1e18;
+
+      document.getElementById("balance").textContent = `${balanceInEth.toFixed(4)} ETH`;
+    }
+
+    fetchBalance();
+  </script>
+</body>
+</html>
